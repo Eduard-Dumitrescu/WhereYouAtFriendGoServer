@@ -1,0 +1,47 @@
+//go
+go get -u github.com/gin-gonic/gin
+go get -u github.com/go-sql-driver/mysql
+go get github.com/google/uuid
+
+//sql
+CREATE DATABASE IF NOT EXISTS WhereYouAtFriend;
+
+USE WhereYouAtFriend;
+
+CREATE TABLE IF NOT EXISTS Citizens(
+	Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	UserGuid VARCHAR(36) NOT NULL UNIQUE,
+	PostalCode VARCHAR(36) NOT NULL,
+	City VARCHAR(36) NOT NULL,
+	IsInside BOOLEAN NOT NULL DEFAULT true,
+	IsLocationFromApi BOOLEAN NOT NULL DEFAULT false,
+	Status VARCHAR(128) NOT NULL DEFAULT 'Inside'
+);
+
+CREATE TABLE IF NOT EXISTS ZoneStatus(
+   Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	PostalCode VARCHAR(36) NOT NULL,
+	City VARCHAR(36) NOT NULL,
+   InsideCount INT NOT NULL DEFAULT 0,
+   TotalCount INT NOT NULL DEFAULT 0,
+   UNIQUE KEY(PostalCode, City)
+);
+
+
+DELIMITER //
+FOR i IN 1..350000
+DO
+  INSERT INTO Citizens(UserGuid, PostalCode, City, IsPostalCodeFromApi) VALUES (UUID(), CAST((i % 13201) AS CHAR), "Cluj", 1);
+END FOR;
+ //
+
+DELIMITER ;
+
+DELIMITER //
+FOR i IN 1..350000
+DO
+  INSERT INTO Citizens(UserGuid, PostalCode, City, IsPostalCodeFromApi) VALUES (UUID(), CAST((i % 13201) AS CHAR), "Cluj", 0);
+END FOR;
+ //
+
+DELIMITER ;
