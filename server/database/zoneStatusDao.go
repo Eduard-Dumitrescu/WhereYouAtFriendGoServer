@@ -42,7 +42,7 @@ func GetCitizensZoneStatus() ([]models.ZonesStatusPlaceAndCount, error) {
 }
 
 // GetZoneStatus data
-func GetZoneStatus(postalCode string, city string) ([]models.ZonesStatusCount, error) {
+func GetZoneStatus(postalCode string, city string) (models.ZonesStatusCount, error) {
 	conn, connectionError := sql.Open("mysql", DbURLDefault())
 	defer conn.Close()
 
@@ -55,18 +55,16 @@ func GetZoneStatus(postalCode string, city string) ([]models.ZonesStatusCount, e
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	rezArr := make([]models.ZonesStatusCount, 0)
+	zoneStaus := new(models.ZonesStatusCount)
 
 	for results.Next() {
-		zoneStatusCount := models.ZonesStatusCount{}
-		var err = results.Scan(&zoneStatusCount.IsInsideCount, &zoneStatusCount.TotalCount)
+		var err = results.Scan(&zoneStaus.IsInsideCount, &zoneStaus.TotalCount)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
-		rezArr = append(rezArr, zoneStatusCount)
 	}
 
-	return rezArr, nil
+	return *zoneStaus, nil
 }
 
 // UpdateZoneStatus inserts new user to database and returns

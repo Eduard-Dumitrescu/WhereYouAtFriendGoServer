@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"./database"
 	"./routing"
 )
 
@@ -28,7 +29,7 @@ func main() {
 	//enable multi core and shit
 	//runtime.GOMAXPROCS(runtime.NumCPU())
 
-	//go database.StartZoneStatusUpdate()
+	go database.StartZoneStatusUpdate()
 
 	server := routing.SetupRouter()
 	// running
